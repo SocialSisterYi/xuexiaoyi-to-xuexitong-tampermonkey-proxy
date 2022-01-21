@@ -24,17 +24,17 @@
 
 ## 编译 Protobuf 结构体
 
-因为学小易的搜题 API 的协议为 Protobuf 所以务必需要编译 Protobuf 结构体为 Python 模块
+因学小易 API 的数据序列化格式为 Protobuf，所以务必编译 proto 结构体
 
 ```bash
 protoc -I. --python_out=. xuexiaoyi.proto
 ```
 
-执行后得到`xuexiaoyi_pb2.py`，该模块为学小易的搜题 API 的接口 descriptor
+执行后得到`xuexiaoyi_pb2.py`，该模块为学小易 API 数据的 descriptor
 
 ## 修改用户脚本
 
-将该用户脚本的`api_array`中的主机名改成你的服务端地址，并注释掉原公共题库 url
+将该用户脚本的`api_array`中的主机名改成你的服务端 ip 并使用88端口，同时注释掉原公共题库 url
 
 这里用`192.168.1.3`举例
 
@@ -58,7 +58,7 @@ const api_array = [
 
 启动服务端
 
-```python
+```bash
 python3 app.py
 ```
 
