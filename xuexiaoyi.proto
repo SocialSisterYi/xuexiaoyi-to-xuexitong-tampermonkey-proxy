@@ -1,0 +1,155 @@
+syntax = "proto3";
+package com.xuexiaoyi.xxy.model.nano;
+
+// 搜索请求
+message ReqOfSearch {
+    int32 search_type = 1;  // 搜索类型
+    string query = 2;       // 搜索内容
+    string search_id = 3;
+    int32 offset = 4;
+    int32 feed_offset = 5;
+    int32 channel = 6;
+    repeated string tab = 7;
+    ImageReq query_img = 8;
+    string trace_id = 9;    // 时间戳
+    SearchReqExtra extra = 10;
+}
+
+// 搜索响应
+message RespOfSearch {
+    int32 err_no = 1;
+    string err_tips = 2;
+    string search_id = 3;
+    SearchResultSet result = 4; // 搜索结果
+    FeedbackSystem feedback = 5;
+    string search_engine = 6;
+    DeviceStatistics device_statistics = 7;
+}
+
+message ImageReq {
+    string img_data = 1;
+    string tos_key = 2;
+    string img_url = 3;
+}
+
+message SearchReqExtra {
+    int32 post_user_action = 1;
+}
+
+// 搜索结果
+message SearchResultSet {
+    repeated SearchResultItem items = 1; // 结果条目
+    bool has_more = 2;
+    int32 offset = 3;
+    int32 total = 4;
+    int32 feed_offset = 5;
+    repeated SearchTab tabs = 6;
+    string ocr_text = 7;
+    map<string,string> events = 51;
+}
+
+// 结果条目
+message SearchResultItem {
+    string item_id = 1;
+    int32 type = 2;
+    QuestionAnswer question_answer = 3;
+    InfoCollection info_collection = 4;
+    Book book = 5;
+    map<string,string> events = 51;
+    Share share = 52;
+    FeedbackSystem item_feedback = 53;
+    ActionModel collect = 54;
+    ActionModel digg = 55;
+    ActionModel bury = 56;
+}
+
+message SearchTab {
+    string name = 1;
+    bool checked = 2;
+}
+
+message QuestionAnswer {
+    int32 type = 1;
+    string question_type = 2;
+    string question_num = 3;
+    string question_plain_text = 4;
+    string answer_plain_text = 5;
+    string provider = 6;
+    string datetime = 7;
+    string title = 8;
+    string q_title = 9;
+    string q_options = 10;
+}
+
+message InfoCollection {
+    string info_title = 1;
+    repeated InfoCollectionBlock blocks = 2;
+}
+
+message InfoCollectionBlock {
+    int32 block_id = 1;
+    string block_name = 2;
+    repeated InfoCollectionItem items = 3;
+    int32 type = 4;
+}
+
+message InfoCollectionItem {
+    int32 item_id = 1;
+    string item_name = 2;
+}
+
+message Book {
+    int32 type = 1;
+    string book_id = 2;
+    string title = 3;
+    string publisher = 4;
+    string subject = 5;
+    string category = 6;
+    string cover_url = 7;
+    string schema = 8;
+    string provider = 9;
+    string provide_date = 10;
+    Catalogue catalogue = 21;
+    repeated string resource_urls = 22;
+    string check_sum = 23;
+}
+
+message Catalogue {
+    repeated Chapter chapters = 1;
+    message Chapter {
+        string id = 1;
+        string title = 2;
+        int32 page_no = 3;
+    }
+}
+
+message Share {
+    string title = 1;
+    string sub_title = 2;
+    string content = 3;
+    string icon_url = 4;
+    string schema = 5;
+}
+
+message FeedbackSystem {
+    string title = 1;
+    repeated FeedbackSystemOption options = 2;
+    bool radio = 3;
+}
+
+message FeedbackSystemOption {
+    string label = 1;
+    repeated string sub_labels = 2;
+    bool accept_input = 3;
+    string input_hint = 4;
+}
+
+message ActionModel {
+    int32 count = 1;
+    bool done = 2;
+}
+
+message DeviceStatistics {
+    int32 search_times = 1;
+    int32 total_times = 2;
+}
