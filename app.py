@@ -4,11 +4,14 @@ import json
 import re
 import time
 import traceback
+import urllib.parse
 from pathlib import Path
+import difflib
 
 import requests
 from flask import Flask, request
 
+from sec_font import secFont2Map, secFontDec, secFontEnc
 from xuexiaoyi_pb2 import ReqOfSearch, RespOfSearch
 
 app = Flask(__name__)
@@ -100,28 +103,55 @@ def searchXuexiaoyi(question):
 def searchView():
     try:
         # 过滤请求问题
+        if request.method == 'GET':
+            question = request.args['question']
+            fontHashMap = None
+        elif request.method == 'POST':
+            formData = dict(urllib.parse.parse_qsl(request.data.decode()))
+            question = formData['question']
+            if (targetAnswers := formData.get('answers')):
+                targetAnswers = targetAnswers.split('#')[1:]
+            else:
+                targetAnswers = None
+            fontHashMap = secFont2Map(formData['secFont']) # 计算加密字体hashMap
+            question = secFontDec(fontHashMap, question) # 解码加密字体
         question = (
-            request.args['question']
+            question
             .replace('题型说明：请输入题型说明','')
             .strip('\x0a\x09')
         )
-        if(answer := cache.getCache(question)):
-            return {
-                "code": 1,
-                "messsage": "",
-                "data": answer,
-                "hit": True
-            }
-        else:
+        answer = cache.getCache(question)
+        hit = True
+        if answer is None:
             answer = searchXuexiaoyi(question)  # 进行搜题
             cache.addCache(question, answer)
-            return {
-                "code": 1,
-                "messsage": "",
-                "data": answer,
-                "hit": False,
-            }
+            hit = False
+
+        print(f'原始答案: {answer}')
+        # 直接命中原目标答案
+        if answer != '错误' and answer != '正确':
+            if targetAnswers is not None:
+                for originAnswer in targetAnswers:
+                    if difflib.SequenceMatcher(
+                        None,
+                        secFontDec(fontHashMap, originAnswer),
+                        answer
+                    ).quick_ratio() >= 0.8: # 比较答案相似度
+                        answer = originAnswer
+                        break
+            # 编码答案文本 (可能不一一对应)
+            else:
+                answer = secFontEnc(fontHashMap, answer)
+
+        return {
+            "code": 1,
+            "messsage": "",
+            "data": answer,
+            "hit": hit,
+            "encryption": (fontHashMap is not None)
+        }
     except Exception as err:
+        traceback.print_exc()
         return {
             "code": -1,
             "messsage": err.__str__(),
@@ -129,6 +159,6 @@ def searchView():
         }
 
 
-app.add_url_rule('/hashTopic', 'search', searchView, methods=['GET'])
+app.add_url_rule('/hashTopic', 'search', searchView, methods=['GET', 'POST'])
 
 app.run('0.0.0.0', 88)
