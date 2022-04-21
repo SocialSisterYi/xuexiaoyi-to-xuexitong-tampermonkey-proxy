@@ -54,6 +54,32 @@ const api_array = [
 // @connect      192.168.1.3
 ```
 
+### 关于加密字体
+
+如果有加密字体解析需求，清自行向`font_hashmap.db`中添加字形hash，并修改用户脚本`findAnswer()`函数下内容
+
+```javascript
+    // 拾取加密字体
+    var secFont = '';
+    if($TiMu.find(".font-cxsecret").length != 0){
+        secFont = $("style[type='text/css']").text().match(/'(data:application\/font-ttf;.*?)'/)[1];
+    }
+    // 回传答案用以后端命中
+    var answers = $TiMu.find("a"),
+        answersText='';
+    for(var i=0;i<answers.length;i++){
+        answersText += ('#'+filterImg(answers.eq(i)));
+    }
+    GM_xmlhttpRequest({
+        method: "POST",
+        url: api_array[setting.api],
+        data:'question='+encodeURIComponent(question)+'&answers='+encodeURIComponent(answersText)+'&secFont='+encodeURIComponent(secFont),
+```
+
+字体加密的效果如下(去掉了文本的`.font-cxsecret`属性)
+
+![](http://i0.hdslb.com/bfs/album/063c3182c89dd22878bf783f71d9b08929b135f1.png)
+
 # 做菜
 
 启动服务端
