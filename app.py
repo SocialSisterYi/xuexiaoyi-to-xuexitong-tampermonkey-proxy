@@ -22,9 +22,9 @@ API_XUEXIAOYI_SEARCH = 'https://xxy.51xuexiaoyi.com/el/v0/sou/search'
 class CacheDAO:
     def __init__(self, file='cache.json'):
         self.cacheFile = Path(file)
-        self.fp = self.cacheFile.open('r+', encoding='utf8')
         if not self.cacheFile.is_file():
-            self.fp.write('{}')
+            self.cacheFile.open('w').write('{}')
+        self.fp = self.cacheFile.open('r+', encoding='utf8')
 
     def getCache(self, question):
         self.fp.seek(0)
