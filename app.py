@@ -113,8 +113,11 @@ def searchView():
                 targetAnswers = targetAnswers.split('#')[1:]
             else:
                 targetAnswers = None
-            fontHashMap = secFont2Map(formData['secFont']) # 计算加密字体hashMap
-            question = secFontDec(fontHashMap, question) # 解码加密字体
+            if (secFontB64 := formData.get('secFont')):
+                fontHashMap = secFont2Map(secFontB64) # 计算加密字体hashMap
+                question = secFontDec(fontHashMap, question) # 解码加密字体
+            else:
+                fontHashMap = None
         question = (
             question
             .replace('题型说明：请输入题型说明','')
@@ -134,9 +137,9 @@ def searchView():
                 for originAnswer in targetAnswers:
                     if difflib.SequenceMatcher(
                         None,
-                        secFontDec(fontHashMap, originAnswer),
+                        secFontDec(fontHashMap, originAnswer) if (fontHashMap is not None) else originAnswer,
                         answer
-                    ).quick_ratio() >= 0.8: # 比较答案相似度
+                    ).quick_ratio() >= 0.95: # 比较答案相似度
                         answer = originAnswer
                         break
             # 编码答案文本 (可能不一一对应)
