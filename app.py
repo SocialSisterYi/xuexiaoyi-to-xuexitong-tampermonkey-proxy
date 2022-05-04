@@ -3,6 +3,7 @@
 import json
 import re
 import time
+import random
 import traceback
 import urllib.parse
 from pathlib import Path
@@ -42,10 +43,20 @@ class CacheDAO:
 
 cache = CacheDAO()
 
+def randomString(chars, length):
+    str = ''
+    while len(str) < length:
+        str += random.choice(chars)
+    return str
+
 def fetchXuexiaoyi(question_text):
     headers = {
         'User-Agent': 'com.xuexiaoyi.xxy/10401 (Linux; U; Android 11; zh_CN; M2002J9E; Build/RKQ1.200826.002; Cronet/TTNetVersion:921ec9e4 2021-07-19 QuicVersion:6ad2ee95 2021-04-06)',
         'Content-Type': 'application/x-protobuf'
+    }
+    params = {
+        'iid': '24433116665000',
+        'device_id': '8' + randomString('0123456789', 15)
     }
     obj_req = ReqOfSearch(
         search_type=3,
@@ -53,7 +64,7 @@ def fetchXuexiaoyi(question_text):
         channel=1,
         trace_id=f'0-{int(time.time()*1000)}'
     )
-    resp = requests.post(API_XUEXIAOYI_SEARCH, data=obj_req.SerializeToString(), headers=headers)
+    resp = requests.post(API_XUEXIAOYI_SEARCH, data=obj_req.SerializeToString(), params=params, headers=headers)
     resp.raise_for_status()
     assert resp.headers.get('Content-Type') == 'application/x-protobuf'
     obj_resp = RespOfSearch()
