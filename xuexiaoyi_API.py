@@ -1,3 +1,5 @@
+from typing import List
+
 import requests
 
 WXAPI_SEARCH = 'https://xxy.51xuexiaoyi.com/el/wx/sou/search'
@@ -16,7 +18,7 @@ class APIError(Exception):
 class XxyWxAPI:
     '学小易-微信小程序API调用'
     session: requests.Session
-    items: list[dict]
+    items: List[dict]
     open_id: str
     
     def __init__(self, open_id: str='') -> None:
