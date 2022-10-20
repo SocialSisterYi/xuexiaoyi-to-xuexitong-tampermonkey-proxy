@@ -3,7 +3,7 @@ import hashlib
 import json
 from io import BytesIO
 from pathlib import Path
-from typing import IO, Union
+from typing import IO, Union, Dict
 
 from fontTools.ttLib.tables._g_l_y_f import Glyph
 from fontTools.ttLib.ttFont import TTFont
@@ -18,8 +18,8 @@ KX_RADICALS_TAB = str.maketrans(
 
 class FontHashDAO:
     '原始字体hashmap DAO'
-    char_map: dict[str, str] # unicode -> hsah
-    hash_map: dict[str, str] # hash -> unicode
+    char_map: Dict[str, str] # unicode -> hsah
+    hash_map: Dict[str, str] # hash -> unicode
     
     def __init__(self, file: str='font_map.json'):
         with open(file, 'r') as fp:
@@ -47,7 +47,7 @@ def hash_glyph(glyph: Glyph) -> str:
         last = glyph.endPtsOfContours[i] + 1
     return hashlib.md5(pos_bin.encode()).hexdigest()
 
-def font2map(file: Union[IO, Path, str]) -> dict[str, str]:
+def font2map(file: Union[IO, Path, str]) -> Dict[str, str]:
     '以加密字体计算hashMap'
     font_hashmap = {}
     if isinstance(file, str):
@@ -57,7 +57,7 @@ def font2map(file: Union[IO, Path, str]) -> dict[str, str]:
             font_hashmap[code] = hash_glyph(glyph._glyph)
     return font_hashmap
 
-def decrypt(dststr_fontmap: dict[str, str], dst_str: str) -> str:
+def decrypt(dststr_fontmap: Dict[str, str], dst_str: str) -> str:
     '解码字体解密'
     ori_str = ''
     for char in dst_str:
