@@ -1,0 +1,8 @@
+# 绑定ip
+host: 0.0.0.0
+# rest API端口号
+port: 88
+# 是否启用缓存
+enable_cache: true
+# 学小易微信客户端session
+xxy_open_id: "oKtmq5YGlp26rm6eL-aRKew1ZRHs"

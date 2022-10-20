@@ -1,0 +1,6 @@
+requests
+pydantic
+colorama
+PyYAML
+flask
+fonttools
