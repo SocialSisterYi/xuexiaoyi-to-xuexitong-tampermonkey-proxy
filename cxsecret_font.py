@@ -23,9 +23,9 @@ class FontHashDAO:
     
     def __init__(self, file: str='font_map.json'):
         with open(file, 'r') as fp:
-            map: dict = json.load(fp)
-        self.char_map = map
-        self.hash_map = dict(zip(map.values(), map.keys()))
+            _map: dict = json.load(fp)
+        self.char_map = _map
+        self.hash_map = dict(zip(_map.values(), map.keys()))
 
     def find_char(self, font_hash: str) -> str:
         '以hash查内码'
