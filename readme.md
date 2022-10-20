@@ -4,7 +4,7 @@
 
 解决公共题库失效或接口风控导致的无法搜题，同时解决学习通前端页面字体加密的问题
 
-使用抓包和反编译取得“学小易”~~客户端（已弃用）~~微信小程序的搜题接口，用于转发搜题请求返回脚本正确答案，从而代替公共题库接口
+使用抓包和反编译取得“学小易” ~~客户端（已弃用）~~ 微信小程序的搜题接口，用于转发搜题请求返回脚本正确答案，从而代替公共题库接口
 
 # 准备食材
 
@@ -141,3 +141,51 @@ python3 app.py
 [研究学习通答题字体加密的随笔（二）](https://shakaianee.top/archives/661/)
 
 [\[Web逆向\] 关于超星学习通网页版字体加密分析](https://www.52pojie.cn/forum.php?mod=viewthread&tid=1631357)
+
+# 技术资料-API接口
+
+## 搜题
+
+> http://127.0.0.1/v1/cx
+
+*方法：POST*
+
+请求体（application/x-www-form-urlencoded）：
+
+```
+question=目标题目
+```
+
+响应（application/json）：
+
+```json
+{
+    "code": 1,      // 响应状态 1: 成功 -1: 失败
+    "messsage": "", // 错误信息
+    "data": "",     // 搜题结果
+    "hit": true     // 是否命中题目缓存
+}
+```
+
+## 解密
+
+> http://127.0.0.1/decrypt
+
+*方法：POST*
+
+请求体（application/json）：
+
+```json
+{
+    "secFont": "", // 密钥字体 base64
+    "dstText": ""  // 目标密文本字符串
+}
+```
+
+响应（application/json）：
+
+```json
+{
+    "srcText": "" // 源文本字符串
+}
+```
